@@ -105,3 +105,6 @@ dist
 
 # Starter specific
 dist/
+
+# Prisma
+migrations/

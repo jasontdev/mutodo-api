@@ -1,20 +1,46 @@
 const express = require('express');
-const { ApolloServer, gql } = require('apollo-server-express');
+const { ApolloServer } = require('apollo-server-express');
+const { PrismaClient } = require('@prisma/client');
+const jose = require('jose');
 
-const typeDefs = gql`
-  type Query {
-    hello: String
-  }
-`;
+import { queries } from './queries.js';
+import { mutations } from './mutations.js';
+import { typeDefs } from './typedefs.js';
 
-const resolvers = {
-  Query: {
-    hello: () => 'Hello world, my name is mutodo'
+const prismaInstance = new PrismaClient();
+
+const buildContext = async ({ req, privateKey, publicKey }) => {
+  const jwt = req.headers.authorization;
+
+  if (!jwt) {
+    return {
+      prismaClient: prismaInstance,
+      jwtPrivateKey: privateKey,
+      jwtPublicKey: publicKey
+    };
   }
+
+  const { payload } = await jose.jwtVerify(jwt, publicKey);
+
+  return {
+    prismaClient: prismaInstance,
+    jwtPrivateKey: privateKey,
+    jwtPublicKey: publicKey,
+    user: payload.sub
+  };
 };
 
 (async () => {
-  const server = new ApolloServer({ typeDefs, resolvers });
+  const { publicKey, privateKey } = await jose.generateKeyPair('ES256');
+
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers: {
+      Query: queries,
+      Mutation: mutations
+    },
+    context: ({ req }) => buildContext({ req, publicKey, privateKey })
+  });
   const app = express();
 
   await server.start();
