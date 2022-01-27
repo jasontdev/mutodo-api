@@ -1,5 +1,5 @@
 datasource db {
-    url = "postgresql://mutodo:abcd1234@localhost:5432/mutodo"
+    url = env("DATABASE_URL")
     provider = "postgresql"
 }
 
