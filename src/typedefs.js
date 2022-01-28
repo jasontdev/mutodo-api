@@ -8,7 +8,7 @@ const typeDefs = gql`
   }
 
   type AccessToken {
-    jwt: String!
+    jwt: String
   }
 
   type Query {

@@ -1,6 +1,6 @@
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient, prisma } = require('@prisma/client');
 const jose = require('jose');
 
 import { queries } from './queries.js';
@@ -14,6 +14,7 @@ const buildContext = async ({ req, privateKey, publicKey }) => {
 
   if (!jwt) {
     return {
+      passwordHashSecret: 'doot doot da loot doot',
       prismaClient: prismaInstance,
       jwtPrivateKey: privateKey,
       jwtPublicKey: publicKey
@@ -32,7 +33,6 @@ const buildContext = async ({ req, privateKey, publicKey }) => {
 
 (async () => {
   const { publicKey, privateKey } = await jose.generateKeyPair('ES256');
-
   const server = new ApolloServer({
     typeDefs,
     resolvers: {
