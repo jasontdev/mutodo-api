@@ -14,7 +14,6 @@ const queries = {
     });
 
     if (!credentials) {
-      console.log('Credentials not found...');
       return {
         jwt: null
       };
