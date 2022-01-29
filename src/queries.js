@@ -1,6 +1,6 @@
 import storage from './storage';
-import { password } from './password';
-import { jwt } from './jwt';
+import { hashPassword } from './password';
+import { getJwt } from './jwt';
 
 const queries = {
   hello: () => 'Hello world, my name is mutodo',
@@ -11,14 +11,14 @@ const queries = {
       return { jwt: null };
     }
 
-    const hashedPassword = password.hash(
+    const hashedPassword = hashPassword(
       rawPassword,
       userCredentials.passwordSalt,
       context.passwordHashSecret
     );
 
     if (hashedPassword === userCredentials.password) {
-      const token = jwt.get(email, context.jwtPrivateKey);
+      const token = getJwt(email, context.jwtPrivateKey);
       return { jwt: token };
     }
 

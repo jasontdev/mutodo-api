@@ -1,3 +1,5 @@
+const jose = require('jose');
+
 const buildContext = async ({ req, privateKey, publicKey, prismaInstance }) => {
   const jwt = req.headers.authorization;
 

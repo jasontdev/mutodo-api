@@ -1,5 +1,3 @@
-const jose = require('jose');
-
 const storage = (prismaClient) => ({
   users: {
     save: async (email, hashedPassword, passwordSalt) => {
@@ -8,9 +6,9 @@ const storage = (prismaClient) => ({
           data: {
             credentials: {
               create: {
-                email: email,
+                email,
                 password: hashedPassword,
-                passwordSalt: passwordSalt
+                passwordSalt
               }
             }
           }
@@ -23,16 +21,15 @@ const storage = (prismaClient) => ({
     }
   },
   credentials: {
-    get: async (email) => {
-      return await prismaClient.credentials.findUnique({
+    get: async (email) =>
+      prismaClient.credentials.findUnique({
         where: {
-          email: email
+          email
         },
         include: {
           user: true
         }
-      });
-    }
+      })
   }
 });
 

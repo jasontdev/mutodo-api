@@ -1,13 +1,13 @@
+import { queries } from './queries';
+import { mutations } from './mutations';
+import { typeDefs } from './typedefs';
+import { buildContext } from './context';
+
 require('dotenv').config();
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
-const { PrismaClient, prisma } = require('@prisma/client');
+const { PrismaClient } = require('@prisma/client');
 const jose = require('jose');
-
-import { queries } from './queries.js';
-import { mutations } from './mutations.js';
-import { typeDefs } from './typedefs.js';
-import { buildContext } from './context.js';
 
 (async () => {
   const prismaInstance = new PrismaClient();
