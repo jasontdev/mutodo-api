@@ -3,7 +3,7 @@ const buildContext = async ({ req, privateKey, publicKey, prismaInstance }) => {
 
   if (!jwt) {
     return {
-      passwordHashSecret: 'doot doot da loot doot',
+      passwordHashSecret: process.env.PASSWORD_HASH_KEY,
       prismaClient: prismaInstance,
       jwtPrivateKey: privateKey,
       jwtPublicKey: publicKey
@@ -13,6 +13,7 @@ const buildContext = async ({ req, privateKey, publicKey, prismaInstance }) => {
   const { payload } = await jose.jwtVerify(jwt, publicKey);
 
   return {
+    passwordHashSecret: process.env.PASSWORD_HASH_KEY,
     prismaClient: prismaInstance,
     jwtPrivateKey: privateKey,
     jwtPublicKey: publicKey,

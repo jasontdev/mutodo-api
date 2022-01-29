@@ -1,40 +1,28 @@
-const jose = require('jose');
-const { createHmac } = require('crypto');
+import storage from './storage';
+import { password } from './password';
+import { jwt } from './jwt';
 
 const queries = {
   hello: () => 'Hello world, my name is mutodo',
   login: async (_, { email, rawPassword }, context) => {
-    const credentials = await context.prismaClient.credentials.findUnique({
-      where: {
-        email: email
-      },
-      include: {
-        user: true
-      }
-    });
-
-    if (!credentials) {
-      return {
-        jwt: null
-      };
-    } else {
-      const hmac = createHmac('sha256', context.passwordHashSecret);
-      hmac.update(rawPassword);
-      hmac.update(credentials.passwordSalt);
-      const hashedPassword = hmac.digest('utf8');
-
-      if (credentials.password !== hashedPassword) {
-        return { jwt: null };
-      }
-      const jwt = await new jose.SignJWT({ 'urn:example:claim': true })
-        .setProtectedHeader({ alg: 'ES256' })
-        .setSubject(email)
-        .setExpirationTime('2h')
-        .setIssuer('https://mutodo.jasont.dev')
-        .sign(context.jwtPrivateKey);
-
-      return { jwt: jwt };
+    const { credentials } = storage(context.prismaClient);
+    const userCredentials = await credentials.get(email);
+    if (!userCredentials) {
+      return { jwt: null };
     }
+
+    const hashedPassword = password.hash(
+      rawPassword,
+      userCredentials.passwordSalt,
+      context.passwordHashSecret
+    );
+
+    if (hashedPassword === userCredentials.password) {
+      const token = jwt.get(email, context.jwtPrivateKey);
+      return { jwt: token };
+    }
+
+    return { jwt: null };
   }
 };
 
