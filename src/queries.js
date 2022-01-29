@@ -1,6 +1,6 @@
 import storage from './storage';
 import { hashPassword } from './password';
-import { getJwt } from './jwt';
+import getJwt from './jwt';
 
 const queries = {
   hello: () => 'Hello world, my name is mutodo',
@@ -26,4 +26,4 @@ const queries = {
   }
 };
 
-export { queries };
+export default queries;

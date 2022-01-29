@@ -23,4 +23,4 @@ const buildContext = async ({ req, privateKey, publicKey, prismaInstance }) => {
   };
 };
 
-export { buildContext };
+export default buildContext;

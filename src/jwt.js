@@ -8,4 +8,4 @@ const getJwt = async (email, jwtPrivateKey) =>
     .setIssuer('https://mutodo.jasont.dev')
     .sign(jwtPrivateKey);
 
-export { getJwt };
+export default getJwt;

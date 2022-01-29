@@ -1,7 +1,7 @@
-import { queries } from './queries';
-import { mutations } from './mutations';
-import { typeDefs } from './typedefs';
-import { buildContext } from './context';
+import queries from './queries';
+import mutations from './mutations';
+import typeDefs from './typedefs';
+import buildContext from './context';
 
 require('dotenv').config();
 const express = require('express');
