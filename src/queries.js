@@ -18,7 +18,11 @@ const queries = {
     );
 
     if (hashedPassword === userCredentials.password) {
-      const token = getJwt(email, context.jwtPrivateKey);
+      const token = getJwt(
+        userCredentials.user.uuid,
+        email,
+        context.jwtPrivateKey
+      );
       return { jwt: token };
     }
 

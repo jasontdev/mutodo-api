@@ -11,10 +11,12 @@ const storage = (prismaClient) => ({
                 passwordSalt
               }
             }
+          },
+          select: {
+            uuid: true
           }
         });
-
-        return user.id;
+        return user.uuid;
       } catch (error) {
         return null;
       }

@@ -1,9 +1,9 @@
 const jose = require('jose');
 
-const getJwt = async (email, jwtPrivateKey) =>
-  new jose.SignJWT({ 'urn:example:claim': true })
+const getJwt = async (uuid, email, jwtPrivateKey) =>
+  new jose.SignJWT({ email })
     .setProtectedHeader({ alg: 'ES256' })
-    .setSubject(email)
+    .setSubject(uuid)
     .setExpirationTime('2h')
     .setIssuer('https://mutodo.jasont.dev')
     .sign(jwtPrivateKey);
