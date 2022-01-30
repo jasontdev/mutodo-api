@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "commonjs",
+    "target": "es2019",
+    "checkJs": true
+  },
+  "include": ["src/**/*.js"],
+  "exclude": ["node_modules", "dist", "migrations"]
+}
