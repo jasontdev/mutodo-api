@@ -1,6 +1,7 @@
-import storage from './storage';
 import { hashPassword } from './password';
 import getJwt from './jwt';
+
+const storage = require('./storage');
 
 const queries = {
   hello: () => 'Hello world, my name is mutodo',

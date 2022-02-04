@@ -2,15 +2,15 @@ import queries from './queries';
 import mutations from './mutations';
 import typeDefs from './typedefs';
 import buildContext from './context';
+import getPrismaClient from './prisma-client';
 
 require('dotenv').config();
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
-const { PrismaClient } = require('@prisma/client');
 const jose = require('jose');
 
 (async () => {
-  const prismaInstance = new PrismaClient();
+  const prismaInstance = getPrismaClient();
   const { publicKey, privateKey } = await jose.generateKeyPair('ES256');
 
   const server = new ApolloServer({

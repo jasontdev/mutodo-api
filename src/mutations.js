@@ -1,5 +1,6 @@
-import storage from './storage';
 import { createSalt, hashPassword } from './password';
+
+const storage = require('./storage');
 
 const mutations = {
   register: async (_, { email, rawPassword }, context) => {

@@ -35,4 +35,4 @@ const storage = (prismaClient) => ({
   }
 });
 
-export default storage;
+module.exports = storage;
