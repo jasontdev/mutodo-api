@@ -1,18 +1,4 @@
-const path = require('path');
-const NodemonPlugin = require('nodemon-webpack-plugin');
-const nodeExternals = require('webpack-node-externals');
+const { merge } = require('webpack-merge');
+const commonConfig = require('./webpack.common');
 
-module.exports = {
-  entry: './src/index.js',
-  target: 'node',
-  mode: 'production',
-  resolve: {
-    extensions: ['.js']
-  },
-  output: {
-    filename: 'server.js',
-    path: path.resolve(__dirname, 'dist')
-  },
-  plugins: [new NodemonPlugin()],
-  externals: [nodeExternals()]
-};
+module.exports = merge(commonConfig, { mode: 'production' });
