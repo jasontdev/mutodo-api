@@ -4,7 +4,7 @@ import typeDefs from './typedefs';
 import buildContext from './context';
 import getPrismaClient from './prisma-client';
 
-require('dotenv').config();
+require('./dotenv-config');
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const jose = require('jose');

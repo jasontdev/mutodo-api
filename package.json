@@ -5,9 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "jest",
-    "start": "node dist/server.js",
-    "build": "webpack",
-    "dev": "webpack --watch --env development"
+    "build": "webpack --config webpack.production.js",
+    "start": "webpack --watch --config webpack.development.js"
   },
   "keywords": [],
   "author": "Jason Telfer",

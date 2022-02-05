@@ -5,7 +5,7 @@ const nodeExternals = require('webpack-node-externals');
 module.exports = {
   entry: './src/index.js',
   target: 'node',
-  mode: 'none',
+  mode: 'development',
   resolve: {
     extensions: ['.js']
   },
