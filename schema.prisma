@@ -13,6 +13,7 @@ model User {
     uuid String @unique @default(uuid())
     name String?
     credentials Credentials?
+    taskLists TaskListsAndUsers[]
 }
 
 model Credentials {    
@@ -23,4 +24,28 @@ model Credentials {
     email String @unique
     password String
     passwordSalt String
+}
+
+model TaskListsAndUsers {
+    taskList TaskList @relation(fields: [taskListId], references: [id])
+    taskListId Int
+    user User @relation(fields: [userUuid], references: [uuid])
+    userUuid String
+
+    @@id([taskListId, userUuid])
+}
+
+model TaskList {
+    @@map("task_lists")
+    id Int @id @default(autoincrement())
+    title String
+    users TaskListsAndUsers[]
+    tasks Task[]
+}
+
+model Task {
+    @@map("tasks")
+    id Int @id @default(autoincrement())
+    taskList TaskList @relation(fields: [taskListId], references: [id])
+    taskListId Int
 }

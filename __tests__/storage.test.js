@@ -3,14 +3,24 @@ const storage = require('../src/storage');
 
 let prismaClient = null;
 
+const createUser = (prisma) =>
+  prismaClient.user.create({
+    data: {
+      credentials: {
+        create: {
+          email: 'alfred@email.com',
+          password: 'adfasdasdasd',
+          passwordSalt: 'asdasdasd'
+        }
+      }
+    }
+  });
+
 beforeEach(async () => {
   prismaClient = getPrismaClient();
   await prismaClient.credentials.deleteMany({});
-  await prismaClient.user.deleteMany({});
-});
-
-afterEach(async () => {
-  await prismaClient.credentials.deleteMany({});
+  await prismaClient.taskListsAndUsers.deleteMany({});
+  await prismaClient.taskList.deleteMany({});
   await prismaClient.user.deleteMany({});
 });
 
@@ -28,25 +38,28 @@ test('attempt to create user with non-unique email', async () => {
 });
 
 test('retrieve a single saved credential', async () => {
-  await prismaClient.user.create({
-    data: {
-      credentials: {
-        create: {
-          email: 'alfred@email.com',
-          password: 'adfasdasdasd',
-          passwordSalt: 'asdasdasd'
-        }
-      }
-    }
-  });
-
+  await createUser(prismaClient);
   const { credentials } = storage(prismaClient);
   const savedCredentials = await credentials.get('alfred@email.com');
   expect(savedCredentials.email).toBe('alfred@email.com');
 });
 
 test('fail to retrieve a non-existant credential', async () => {
-  await prismaClient.user.create({
+  await createUser(prismaClient);
+  const { credentials } = storage(prismaClient);
+  const notSavedCredentials = await credentials.get('jason@email.com');
+  expect(notSavedCredentials).toBe(null);
+});
+
+test('create task list with single user', async () => {
+  const { uuid } = await createUser(prismaClient);
+  const { taskLists } = storage(prismaClient);
+  const id = await taskLists.create({ title: 'Tesk task list', users: [uuid] });
+  expect(id).not.toBe(null);
+});
+
+test('retrieve all tasks lists by user', async () => {
+  const { uuid } = await prismaClient.user.create({
     data: {
       credentials: {
         create: {
@@ -58,8 +71,34 @@ test('fail to retrieve a non-existant credential', async () => {
     }
   });
 
-  const { credentials } = storage(prismaClient);
+  await prismaClient.taskList.create({
+    data: {
+      title: 'First task list',
+      users: {
+        create: [
+          {
+            user: { connect: { uuid } }
+          }
+        ]
+      }
+    }
+  });
 
-  const notSavedCredentials = await credentials.get('jason@email.com');
-  expect(notSavedCredentials).toBe(null);
+  await prismaClient.taskList.create({
+    data: {
+      title: 'Second task list',
+      users: {
+        create: [
+          {
+            user: { connect: { uuid } }
+          }
+        ]
+      }
+    }
+  });
+
+  const { taskLists } = storage(prismaClient);
+  const lists = await taskLists.findByUser(uuid);
+  const titles = lists.map((list) => list.title);
+  expect(titles).toStrictEqual(['First task list', 'Second task list']);
 });

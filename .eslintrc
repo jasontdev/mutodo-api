@@ -5,6 +5,7 @@
   "rules": {
     "no-console": 1, // Means warning
     "prettier/prettier": 2, // Means error
-    "semi": 1
+    "semi": 1,
+    "no-unused-vars": 1
   }
 }
