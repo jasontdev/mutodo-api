@@ -48,4 +48,6 @@ model Task {
     id Int @id @default(autoincrement())
     taskList TaskList @relation(fields: [taskListId], references: [id])
     taskListId Int
+    title String
+    isComplete Boolean @default(false)
 }

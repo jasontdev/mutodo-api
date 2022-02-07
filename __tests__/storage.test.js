@@ -16,9 +16,24 @@ const createUser = (prisma) =>
     }
   });
 
+const createTaskList = (title, uuid) =>
+  prismaClient.taskList.create({
+    data: {
+      title,
+      users: {
+        create: [
+          {
+            user: { connect: { uuid } }
+          }
+        ]
+      }
+    }
+  });
+
 beforeEach(async () => {
   prismaClient = getPrismaClient();
   await prismaClient.credentials.deleteMany({});
+  await prismaClient.task.deleteMany({});
   await prismaClient.taskListsAndUsers.deleteMany({});
   await prismaClient.taskList.deleteMany({});
   await prismaClient.user.deleteMany({});
@@ -59,46 +74,66 @@ test('create task list with single user', async () => {
 });
 
 test('retrieve all tasks lists by user', async () => {
-  const { uuid } = await prismaClient.user.create({
+  const { uuid } = await createUser(prismaClient);
+  await createTaskList('First task list', uuid);
+  await createTaskList('Second task list', uuid);
+
+  const { taskLists } = storage(prismaClient);
+  const lists = await taskLists.findByUser(uuid);
+  const titles = lists.map((list) => list.title);
+  expect(titles.length).toBe(2);
+});
+
+test('add task to task list', async () => {
+  const { tasks } = storage(prismaClient);
+
+  const { uuid } = await createUser(prismaClient);
+  const { id } = await createTaskList('Test task lest', uuid);
+
+  const newTask = tasks.save({
+    taskListId: id,
+    task: { title: 'Test task' }
+  });
+
+  expect(newTask).not.toBe(null);
+});
+
+test('find tasks', async () => {
+  const { tasks } = storage(prismaClient);
+  const { uuid } = await createUser(prismaClient);
+  const { id } = await createTaskList('Test task lest', uuid);
+
+  await prismaClient.task.create({
     data: {
-      credentials: {
-        create: {
-          email: 'alfred@email.com',
-          password: 'adfasdasdasd',
-          passwordSalt: 'asdasdasd'
+      title: 'Take out the garbage',
+      taskList: {
+        connect: {
+          id
         }
       }
     }
   });
 
-  await prismaClient.taskList.create({
+  await prismaClient.task.create({
     data: {
-      title: 'First task list',
-      users: {
-        create: [
-          {
-            user: { connect: { uuid } }
-          }
-        ]
+      title: 'Buy food for Alfred',
+      taskList: {
+        connect: {
+          id
+        }
       }
     }
   });
 
-  await prismaClient.taskList.create({
-    data: {
-      title: 'Second task list',
-      users: {
-        create: [
-          {
-            user: { connect: { uuid } }
-          }
-        ]
-      }
-    }
-  });
+  const savedTasks = await tasks.get({ taskListId: id });
+  expect(savedTasks.length).toBe(2);
+});
 
-  const { taskLists } = storage(prismaClient);
-  const lists = await taskLists.findByUser(uuid);
-  const titles = lists.map((list) => list.title);
-  expect(titles).toStrictEqual(['First task list', 'Second task list']);
+test('fail to find tasks', async () => {
+  const { tasks } = storage(prismaClient);
+  const { uuid } = await createUser(prismaClient);
+  const { id } = await createTaskList('Test task lest', uuid);
+
+  const savedTasks = await tasks.get(id);
+  expect(savedTasks.length).toBe(0);
 });

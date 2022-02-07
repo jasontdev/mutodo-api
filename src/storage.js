@@ -69,6 +69,44 @@ const storage = (prismaClient) => ({
         return null;
       }
     }
+  },
+  tasks: {
+    save: async ({ taskListId, task }) => {
+      // TODO use taskListId to connect new task to a tasklist
+      try {
+        const savedTask = await prismaClient.task.create({
+          data: {
+            title: task.title,
+            taskList: {
+              connect: { id: taskListId }
+            }
+          }
+        });
+        return savedTask;
+      } catch (error) {
+        console.log(error);
+        return null;
+      }
+    },
+    get: async ({ taskListId }) => {
+      try {
+        const tasks = await prismaClient.task.findMany({
+          where: {
+            taskList: {
+              id: taskListId
+            }
+          }
+        });
+
+        if (!tasks) {
+          console.log('No tasks found...');
+          return [];
+        }
+        return tasks;
+      } catch (error) {
+        return [];
+      }
+    }
   }
 });
 
