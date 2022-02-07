@@ -1,6 +1,6 @@
 import { createSalt, hashPassword } from './password';
 
-const { userRepository } = require('./storage');
+const { userStore } = require('./storage');
 
 const mutations = {
   register: async (_, { email, rawPassword }, context) => {
@@ -11,7 +11,7 @@ const mutations = {
       context.passwordHashSecret
     );
 
-    const uuid = await userRepository.save(email, hashedPassword, passwordSalt);
+    const uuid = await userStore.save(email, hashedPassword, passwordSalt);
     return { uuid };
   }
 };

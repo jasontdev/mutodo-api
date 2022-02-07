@@ -1,6 +1,6 @@
 const getPrismaClient = require('./prisma-client');
 
-const userRepository = {
+const userStore = {
   save: async (email, hashedPassword, passwordSalt) => {
     const prismaClient = getPrismaClient();
     try {
@@ -25,7 +25,7 @@ const userRepository = {
   }
 };
 
-const credentialsRepository = {
+const credentialsStore = {
   get: async (email) => {
     const prismaClient = getPrismaClient();
 
@@ -40,7 +40,7 @@ const credentialsRepository = {
   }
 };
 
-const taskListRepository = {
+const taskListStore = {
   create: async ({ title, users }) => {
     const prismaClient = getPrismaClient();
 
@@ -82,7 +82,7 @@ const taskListRepository = {
   }
 };
 
-const taskRepository = {
+const taskStore = {
   save: async ({ taskListId, task }) => {
     const prismaClient = getPrismaClient();
     // TODO use taskListId to connect new task to a tasklist
@@ -123,8 +123,8 @@ const taskRepository = {
 };
 
 module.exports = {
-  credentialsRepository,
-  taskRepository,
-  taskListRepository,
-  userRepository
+  credentialsStore,
+  taskStore,
+  taskListStore,
+  userStore
 };

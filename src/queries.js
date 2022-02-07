@@ -1,12 +1,12 @@
 import { hashPassword } from './password';
 import getJwt from './jwt';
 
-const { credentialsRepository } = require('./storage');
+const { credentialsStore } = require('./storage');
 
 const queries = {
   hello: () => 'Hello world, my name is mutodo',
   login: async (_, { email, rawPassword }, context) => {
-    const userCredentials = await credentialsRepository.get(email);
+    const userCredentials = await credentialsStore.get(email);
     if (!userCredentials) {
       return { jwt: null };
     }

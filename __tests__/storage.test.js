@@ -1,9 +1,9 @@
 const getPrismaClient = require('../src/prisma-client');
 const {
-  userRepository,
-  taskRepository,
-  taskListRepository,
-  credentialsRepository
+  userStore,
+  taskStore,
+  taskListStore,
+  credentialsStore
 } = require('../src/storage');
 
 let prismaClient = null;
@@ -45,41 +45,31 @@ beforeEach(async () => {
 });
 
 test('create single user with credentials', async () => {
-  const uuid = await userRepository.save(
-    'tobias@email.com',
-    'abcd1234',
-    'abcd1234'
-  );
+  const uuid = await userStore.save('tobias@email.com', 'abcd1234', 'abcd1234');
   expect(uuid).not.toBe(null);
 });
 
 test('attempt to create user with non-unique email', async () => {
-  let uuid = await userRepository.save(
-    'tobias@email.com',
-    'abcd1234',
-    'abcd1234'
-  );
-  uuid = await userRepository.save('tobias@email.com', 'abcd1234', 'abcd1234');
+  let uuid = await userStore.save('tobias@email.com', 'abcd1234', 'abcd1234');
+  uuid = await userStore.save('tobias@email.com', 'abcd1234', 'abcd1234');
   expect(uuid).toBe(null);
 });
 
 test('retrieve a single saved credential', async () => {
   await createUser(prismaClient);
-  const savedCredentials = await credentialsRepository.get('alfred@email.com');
+  const savedCredentials = await credentialsStore.get('alfred@email.com');
   expect(savedCredentials.email).toBe('alfred@email.com');
 });
 
 test('fail to retrieve a non-existant credential', async () => {
   await createUser(prismaClient);
-  const notSavedCredentials = await credentialsRepository.get(
-    'jason@email.com'
-  );
+  const notSavedCredentials = await credentialsStore.get('jason@email.com');
   expect(notSavedCredentials).toBe(null);
 });
 
 test('create task list with single user', async () => {
   const { uuid } = await createUser(prismaClient);
-  const id = await taskListRepository.create({
+  const id = await taskListStore.create({
     title: 'Tesk task list',
     users: [uuid]
   });
@@ -91,7 +81,7 @@ test('retrieve all tasks lists by user', async () => {
   await createTaskList('First task list', uuid);
   await createTaskList('Second task list', uuid);
 
-  const lists = await taskListRepository.findByUser(uuid);
+  const lists = await taskListStore.findByUser(uuid);
   const titles = lists.map((list) => list.title);
   expect(titles.length).toBe(2);
 });
@@ -100,7 +90,7 @@ test('add task to task list', async () => {
   const { uuid } = await createUser(prismaClient);
   const { id } = await createTaskList('Test task lest', uuid);
 
-  const newTask = taskRepository.save({
+  const newTask = taskStore.save({
     taskListId: id,
     task: { title: 'Test task' }
   });
@@ -134,7 +124,7 @@ test('find tasks', async () => {
     }
   });
 
-  const savedTasks = await taskRepository.get({ taskListId: id });
+  const savedTasks = await taskStore.get({ taskListId: id });
   expect(savedTasks.length).toBe(2);
 });
 
@@ -142,6 +132,6 @@ test('fail to find tasks', async () => {
   const { uuid } = await createUser(prismaClient);
   const { id } = await createTaskList('Test task lest', uuid);
 
-  const savedTasks = await taskRepository.get(id);
+  const savedTasks = await taskStore.get(id);
   expect(savedTasks.length).toBe(0);
 });
