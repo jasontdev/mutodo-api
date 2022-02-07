@@ -119,6 +119,22 @@ const taskStore = {
     } catch (error) {
       return [];
     }
+  },
+  delete: async ({ id }) => {
+    const prismaClient = getPrismaClient();
+
+    try {
+      return prismaClient.task.delete({
+        where: {
+          id
+        },
+        select: {
+          id: true
+        }
+      });
+    } catch {
+      return null;
+    }
   }
 };
 

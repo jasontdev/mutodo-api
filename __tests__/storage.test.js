@@ -139,3 +139,24 @@ test('fail to find tasks', async () => {
   const savedTasks = await taskStore.get(id);
   expect(savedTasks.length).toBe(0);
 });
+
+test('delete a task', async () => {
+  const { uuid } = await createUser(prismaClient);
+  const { id } = await createTaskList('Test task list', uuid);
+
+  const task = await prismaClient.task.create({
+    data: {
+      title: 'Wash and fold laundry',
+      taskList: {
+        connect: {
+          id
+        }
+      }
+    },
+    select: {
+      id: true
+    }
+  });
+  const deletedTask = await taskStore.delete({ id: task.id });
+  expect(deletedTask.id).toBe(task.id);
+});
