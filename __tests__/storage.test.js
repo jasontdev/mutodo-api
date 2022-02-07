@@ -45,13 +45,17 @@ beforeEach(async () => {
 });
 
 test('create single user with credentials', async () => {
-  const uuid = await userStore.save('tobias@email.com', 'abcd1234', 'abcd1234');
+  const uuid = await userStore.create(
+    'tobias@email.com',
+    'abcd1234',
+    'abcd1234'
+  );
   expect(uuid).not.toBe(null);
 });
 
 test('attempt to create user with non-unique email', async () => {
-  let uuid = await userStore.save('tobias@email.com', 'abcd1234', 'abcd1234');
-  uuid = await userStore.save('tobias@email.com', 'abcd1234', 'abcd1234');
+  let uuid = await userStore.create('tobias@email.com', 'abcd1234', 'abcd1234');
+  uuid = await userStore.create('tobias@email.com', 'abcd1234', 'abcd1234');
   expect(uuid).toBe(null);
 });
 
@@ -90,7 +94,7 @@ test('add task to task list', async () => {
   const { uuid } = await createUser(prismaClient);
   const { id } = await createTaskList('Test task lest', uuid);
 
-  const newTask = taskStore.save({
+  const newTask = taskStore.create({
     taskListId: id,
     task: { title: 'Test task' }
   });

@@ -11,7 +11,7 @@ const mutations = {
       context.passwordHashSecret
     );
 
-    const uuid = await userStore.save(email, hashedPassword, passwordSalt);
+    const uuid = await userStore.create(email, hashedPassword, passwordSalt);
     return { uuid };
   }
 };

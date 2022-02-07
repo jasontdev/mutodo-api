@@ -1,7 +1,7 @@
 const getPrismaClient = require('./prisma-client');
 
 const userStore = {
-  save: async (email, hashedPassword, passwordSalt) => {
+  create: async (email, hashedPassword, passwordSalt) => {
     const prismaClient = getPrismaClient();
     try {
       const user = await prismaClient.user.create({
@@ -83,7 +83,7 @@ const taskListStore = {
 };
 
 const taskStore = {
-  save: async ({ taskListId, task }) => {
+  create: async ({ taskListId, task }) => {
     const prismaClient = getPrismaClient();
     // TODO use taskListId to connect new task to a tasklist
     try {
