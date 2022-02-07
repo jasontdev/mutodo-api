@@ -84,7 +84,6 @@ const storage = (prismaClient) => ({
         });
         return savedTask;
       } catch (error) {
-        console.log(error);
         return null;
       }
     },
@@ -99,7 +98,6 @@ const storage = (prismaClient) => ({
         });
 
         if (!tasks) {
-          console.log('No tasks found...');
           return [];
         }
         return tasks;
