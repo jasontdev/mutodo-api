@@ -1,10 +1,9 @@
 import { createSalt, hashPassword } from './password';
 
-const storage = require('./storage');
+const { userRepository } = require('./storage');
 
 const mutations = {
   register: async (_, { email, rawPassword }, context) => {
-    const { users } = storage(context.prismaClient);
     const passwordSalt = createSalt();
     const hashedPassword = hashPassword(
       rawPassword,
@@ -12,7 +11,7 @@ const mutations = {
       context.passwordHashSecret
     );
 
-    const uuid = await users.save(email, hashedPassword, passwordSalt);
+    const uuid = await userRepository.save(email, hashedPassword, passwordSalt);
     return { uuid };
   }
 };

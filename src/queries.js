@@ -1,13 +1,12 @@
 import { hashPassword } from './password';
 import getJwt from './jwt';
 
-const storage = require('./storage');
+const { credentialsRepository } = require('./storage');
 
 const queries = {
   hello: () => 'Hello world, my name is mutodo',
   login: async (_, { email, rawPassword }, context) => {
-    const { credentials } = storage(context.prismaClient);
-    const userCredentials = await credentials.get(email);
+    const userCredentials = await credentialsRepository.get(email);
     if (!userCredentials) {
       return { jwt: null };
     }
