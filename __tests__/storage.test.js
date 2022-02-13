@@ -104,7 +104,7 @@ test('add task to task list', async () => {
 
 test('find tasks', async () => {
   const { uuid } = await createUser(prismaClient);
-  const { id } = await createTaskList('Test task lest', uuid);
+  const { id } = await createTaskList('Test task list', uuid);
 
   await prismaClient.task.create({
     data: {
@@ -134,7 +134,7 @@ test('find tasks', async () => {
 
 test('fail to find tasks', async () => {
   const { uuid } = await createUser(prismaClient);
-  const { id } = await createTaskList('Test task lest', uuid);
+  const { id } = await createTaskList('Test task list', uuid);
 
   const savedTasks = await taskStore.get(id);
   expect(savedTasks.length).toBe(0);

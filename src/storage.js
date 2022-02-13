@@ -45,7 +45,7 @@ const taskListStore = {
     const prismaClient = getPrismaClient();
 
     try {
-      const newTaskList = await prismaClient.taskList.create({
+      return prismaClient.taskList.create({
         data: {
           title,
           users: {
@@ -53,10 +53,13 @@ const taskListStore = {
               user: { connect: { uuid } }
             }))
           }
+        },
+        include: {
+          users: true
         }
       });
-      return newTaskList.id;
     } catch (error) {
+      console.log(error);
       return null;
     }
   },

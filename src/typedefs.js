@@ -22,6 +22,12 @@ const typeDefs = gql`
     uuid: String
   }
 
+  type TaskList {
+    id: ID!
+    title: String
+    users: [User]
+  }
+
   type Query {
     hello: String
     login(email: String!, rawPassword: String!): AccessToken
@@ -29,6 +35,7 @@ const typeDefs = gql`
 
   type Mutation {
     register(email: String!, rawPassword: String!): UUID
+    createTaskList(title: String!, users: [String]!): TaskList
   }
 `;
 
