@@ -1,7 +1,7 @@
 import { hashPassword } from './password';
 import getJwt from './jwt';
 
-const { credentialsStore } = require('./storage');
+const { credentialsStore, taskListStore } = require('./storage');
 
 const queries = {
   hello: () => 'Hello world, my name is mutodo',
@@ -27,6 +27,13 @@ const queries = {
     }
 
     return { jwt: null };
+  },
+  tasklists: async (_, { uuid }, context) => {
+    if (context.user === uuid) {
+      const taskLists = await taskListStore.findByUser(uuid);
+      return taskLists;
+    }
+    return null;
   }
 };
 

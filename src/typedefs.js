@@ -7,6 +7,7 @@ const typeDefs = gql`
     name: String
     email: String!
     credentials: Credentials!
+    taskLists: [TaskList]
   }
 
   type Credentials {
@@ -25,12 +26,21 @@ const typeDefs = gql`
   type TaskList {
     id: ID!
     title: String
+    tasks: [Task]
     users: [User]
+  }
+
+  type Task {
+    id: ID!
+    title: String!
+    isComplete: Boolean!
+    description: String
   }
 
   type Query {
     hello: String
     login(email: String!, rawPassword: String!): AccessToken
+    tasklists(uuid: String!): [TaskList]
   }
 
   type Mutation {

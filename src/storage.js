@@ -20,6 +20,7 @@ const userStore = {
       });
       return user.uuid;
     } catch (error) {
+      console.log(error);
       return null;
     }
   }
