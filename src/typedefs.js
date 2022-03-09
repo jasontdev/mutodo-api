@@ -16,6 +16,7 @@ const typeDefs = gql`
   }
 
   type AccessToken {
+    uuid: String
     jwt: String
   }
 

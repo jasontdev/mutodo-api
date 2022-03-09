@@ -23,10 +23,10 @@ const queries = {
         email,
         context.jwtPrivateKey
       );
-      return { jwt: token };
+      return { uuid: userCredentials.user.uuid, jwt: token };
     }
 
-    return { jwt: null };
+    return { uuid: null, jwt: null };
   },
   tasklists: async (_, { uuid }, context) => {
     if (context.user === uuid) {
